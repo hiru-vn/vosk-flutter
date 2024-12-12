@@ -38,6 +38,7 @@ class VoskFlutterPlugin {
 
   late final Map<String, Completer<Model>> _pendingModels = {};
   late final Map<String, Completer<SpeakerModel>> _pendingSpeakerModels = {};
+  static SpeechService? _speechService;
 
   /// Create a model from model data located at the [modelPath].
   /// See [ModelLoader]
@@ -134,6 +135,7 @@ class VoskFlutterPlugin {
   ///
   /// This method may throw [MicrophoneAccessDeniedException].
   Future<SpeechService> initSpeechService(Recognizer recognizer) async {
+    if (_speechService != null) return _speechService!;
     if (await Permission.microphone.status == PermissionStatus.denied &&
         await Permission.microphone.request() == PermissionStatus.denied) {
       throw MicrophoneAccessDeniedException();
@@ -143,7 +145,14 @@ class VoskFlutterPlugin {
       'recognizerId': recognizer.id,
       'sampleRate': recognizer.sampleRate,
     });
-    return SpeechService(_channel);
+    _speechService = SpeechService(_channel);
+    return _speechService!;
+  }
+
+  /// Get the speech service instance.
+  SpeechService? getSpeechService() {
+    _speechService ??= SpeechService(_channel);
+    return _speechService;
   }
 
   Future<void> _methodCallHandler(MethodCall call) async {
