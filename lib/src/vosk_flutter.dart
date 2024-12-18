@@ -136,10 +136,10 @@ class VoskFlutterPlugin {
   /// This method may throw [MicrophoneAccessDeniedException].
   Future<SpeechService> initSpeechService(Recognizer recognizer) async {
     if (_speechService != null) return _speechService!;
-    if (await Permission.microphone.status == PermissionStatus.denied &&
-        await Permission.microphone.request() == PermissionStatus.denied) {
-      throw MicrophoneAccessDeniedException();
-    }
+    // if (await Permission.microphone.status == PermissionStatus.denied &&
+    //     await Permission.microphone.request() == PermissionStatus.denied) {
+    //   throw MicrophoneAccessDeniedException();
+    // }
 
     await _channel.invokeMethod('speechService.init', {
       'recognizerId': recognizer.id,
